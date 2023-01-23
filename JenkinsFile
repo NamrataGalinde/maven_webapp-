@@ -1,0 +1,65 @@
+pipeline 
+{ 
+agent any 
+    stages 
+    {
+        stage ('Git checkout')
+        {
+            steps
+            {
+                echo "checking out souce code from GitHub"
+                git branch: 'main', url: 'https://github.com/NamrataGalinde/maven_webapp-'
+            }
+        }
+        stage ('User input')
+        {
+            steps
+            {
+              
+                input 'Proceed to build the app ?'
+            }
+        }
+        stage ('Build')
+        { 
+            steps 
+            {
+               echo "building"
+               bat 'java -version'
+               bat 'mvn --version'
+               bat 'mvn package'
+               echo "war file created"
+            }
+        }
+        stage ('Deploy') 
+        { 
+            steps
+            {
+                echo "Deploying the app in Tomcat server"
+                
+                bat 'dir'
+                // bat "copy source destination"
+                bat "copy target\\*.war C:\\Users\\hp-pc\\Downloads\\apache-tomcat-10.0.27-windows-x64\\apache-tomcat-10.0.27\\webapps"
+            }
+        }
+       /* stage ('Test') { 
+        
+        }
+        stage ('QA') { 
+        
+        }
+        
+        stage ('Monitor') { 
+ 
+        }*/
+ 
+    }
+    
+    post {
+    success {
+      echo "'Send mail on success'"
+    }
+    failure {
+       echo "'Send mail on failure'"
+    }
+  }
+}
